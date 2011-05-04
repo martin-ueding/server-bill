@@ -79,7 +79,7 @@ class HosterBill(Entity):
 
 class HosterCustomerNumber(Entity):
 	customer_number = Field(Integer)
-	packages = OneToMany("Packages")
+	packages = OneToMany("Package")
 
 
 	def __repr__(self):
