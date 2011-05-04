@@ -32,6 +32,7 @@ class Package(Entity):
 	hoster_customer_number = ManyToOne("HosterCustomerNumber")
 	interval_months = Field(Integer)
 	customer = ManyToOne("Customer")
+	domains = OneToMany("Domains")
 
 	hoster_bills = OneToMany("HosterBill")
 
@@ -91,3 +92,20 @@ class HosterCustomerNumber(Entity):
 		verbose_name_plural = gettext("Hoster Customer Numbers")
 
 		list_display = ['customer_number']
+
+
+class Domain(Entity):
+	url = Field(Unicode)
+	package = ManyToOne("Package")
+
+	def __repr__(self):
+		return gettext("<Domain %s>") % self.customer_number
+
+	def __unicode__(self):
+		return self.__repr__()
+
+	class Admin(EntityAdmin):
+		verbose_name = gettext("Domain")
+		verbose_name_plural = gettext("Domain")
+
+		list_display = ['url']
