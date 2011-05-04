@@ -21,7 +21,7 @@ class Customer(Entity):
 
 
 	def __unicode__(self):
-		return gettext("<Customer %s>") % self.name
+		return gettext("<Customer %s>") % self.name or gettext("unknown Customer")
 
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Customer")
@@ -40,7 +40,7 @@ class Package(Entity):
 		return gettext("<Package for %s>") % self.customer.name
 	
 	def __unicode__(self):
-		return gettext("<Package for %s>") % self.customer.name
+		return gettext("<Package for %s>") % self.customer.name or gettext("unknown Package")
 
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Package")
@@ -63,7 +63,7 @@ class HosterBill(Entity):
 		return gettext("<HosterBill %s>") % self.bill_id
 	
 	def __unicode__(self):
-		return gettext("<HosterBill %s>") % self.bill_id
+		return gettext("<HosterBill %s>") % self.bill_id or gettext("unknown HosterBill")
 
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Hoster Bill")
