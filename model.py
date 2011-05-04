@@ -46,7 +46,7 @@ class Package(Entity):
 		verbose_name = gettext("Package")
 		verbose_name_plural = gettext("Packages")
 
-		list_display = ['interval_months']
+		list_display = ['interval_months', 'customer']
 
 class HosterBill(Entity):
 	date = Field(Date)
@@ -69,7 +69,7 @@ class HosterBill(Entity):
 		verbose_name = gettext("Hoster Bill")
 		verbose_name_plural = gettext("Hoster Bills")
 
-		list_display = ['date', 'amount', 'bill_id', 'payed_date', 'isPayed']
+		list_display = ['date', 'amount', 'bill_id', 'payed_date', 'package', 'isPayed']
 
 	
 
