@@ -63,10 +63,7 @@ class HosterBill(Entity):
 
 	@ColumnProperty
 	def isPayed(self):
-		if self.amount > 10:
-			return gettext("is payed")
-		else:
-			return gettext("is not payed")
+		return self.amount > 10
 
 	def __repr__(self):
 		return gettext("<HosterBill %s>") % self.bill_id or gettext("unknown HosterBill")
