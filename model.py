@@ -59,6 +59,7 @@ class HosterBill(Entity):
 	amount = Field(Integer)
 	bill_id = Field(Unicode(100))
 	payed_date = Field(Date)
+	own_bill = OneToOne("OwnBill", inverse='hoster_bill')
 
 	@ColumnProperty
 	def isPayed(self):
@@ -82,7 +83,7 @@ class HosterCustomerNumber(Entity):
 
 
 	def __repr__(self):
-		return gettext("<HosterCustomerNumber %s>") % self.customer_number
+		return gettext("<HosterCustomerNumber %s>") % self.customer_number or gettext("unknown HosterCustomerNumber")
 
 	def __unicode__(self):
 		return self.__repr__()
@@ -99,7 +100,8 @@ class Domain(Entity):
 	package = ManyToOne("Package")
 
 	def __repr__(self):
-		return gettext("<Domain %s>") % self.customer_number
+		return gettext("<Domain %s>") % self.url or gettext("unknown Domain")
+
 
 	def __unicode__(self):
 		return self.__repr__()
@@ -109,3 +111,23 @@ class Domain(Entity):
 		verbose_name_plural = gettext("Domain")
 
 		list_display = ['url']
+
+
+class OwnBill(Entity):
+	date = Field(Date)
+	amount = Field(Integer)
+	hoster_bill = ManyToOne("HosterBill")
+	payed_when = Field(Date)
+	bill_id = Field(Unicode)
+
+	def __repr__(self):
+		return gettext("<OwnBill %s>") % self.bill_id or gettext("unknown OwnBill")
+
+	def __unicode__(self):
+		return self.__repr__()
+
+	class Admin(EntityAdmin):
+		verbose_name = gettext("Own Bill")
+		verbose_name_plural = gettext("Own Bills")
+
+		list_display = ['bill_id', 'date', 'payed_when', 'hoster_bill']
