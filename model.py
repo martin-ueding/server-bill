@@ -29,7 +29,7 @@ class Customer(Entity):
 		list_display = ['name', 'bill_prefix']
 
 class Package(Entity):
-	#hoster_customer_number = Field
+	hoster_customer_number = ManyToOne("HosterCustomerNumber")
 	interval_months = Field(Integer)
 	customer = ManyToOne("Customer")
 
@@ -37,9 +37,11 @@ class Package(Entity):
 
 	def __repr__(self):
 		if self.customer is None:
-			return gettext("unknown Customer")
+			display_customer = gettext("unknown Customer")
 		else:
-			return gettext("<Package for %s>") % self.customer.name
+			display_customer = self.customer.name
+
+		return gettext("<Package for %s>") % display_customer
 	
 	def __unicode__(self):
 		return self.__repr__()
@@ -73,5 +75,19 @@ class HosterBill(Entity):
 
 		list_display = ['date', 'amount', 'bill_id', 'payed_date', 'package', 'isPayed']
 
-	
+class HosterCustomerNumber(Entity):
+	customer_number = Field(Integer)
+	packages = OneToMany("Packages")
 
+
+	def __repr__(self):
+		return gettext("<HosterCustomerNumber %s>") % self.customer_number
+
+	def __unicode__(self):
+		return self.__repr__()
+
+	class Admin(EntityAdmin):
+		verbose_name = gettext("Hoster Customer Number")
+		verbose_name_plural = gettext("Hoster Customer Numbers")
+
+		list_display = ['customer_number']
