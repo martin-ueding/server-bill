@@ -17,7 +17,11 @@ class Customer(Entity):
 	packages = OneToMany("Package")
 
 	def __repr__(self):
-		return gettext("<Customer %s>") & self.name
+		return gettext("<Customer %s>") % self.name
+
+
+	def __unicode__(self):
+		return gettext("<Customer %s>") % self.name
 
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Customer")
@@ -31,6 +35,12 @@ class Package(Entity):
 	customer = ManyToOne("Customer")
 
 	hoster_bills = OneToMany("HosterBill")
+
+	def __repr__(self):
+		return gettext("<Package for %s>") % self.customer.name
+	
+	def __unicode__(self):
+		return gettext("<Package for %s>") % self.customer.name
 
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Package")
@@ -48,6 +58,12 @@ class HosterBill(Entity):
 	@ColumnProperty
 	def isPayed(self):
 		return self.amount > 10
+
+	def __repr__(self):
+		return gettext("<HosterBill %s>") % self.bill_id
+	
+	def __unicode__(self):
+		return gettext("<HosterBill %s>") % self.bill_id
 
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Hoster Bill")
