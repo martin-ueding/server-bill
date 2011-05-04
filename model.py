@@ -51,7 +51,7 @@ class Package(Entity):
 		verbose_name = gettext("Package")
 		verbose_name_plural = gettext("Packages")
 
-		list_display = ['interval_months', 'customer']
+		list_display = ['interval_months', 'customer', 'hoster_customer_number']
 
 class HosterBill(Entity):
 	date = Field(Date)
@@ -63,7 +63,10 @@ class HosterBill(Entity):
 
 	@ColumnProperty
 	def isPayed(self):
-		return self.amount > 10
+		if self.amount > 10:
+			return gettext("is payed")
+		else:
+			return gettext("is not payed")
 
 	def __repr__(self):
 		return gettext("<HosterBill %s>") % self.bill_id or gettext("unknown HosterBill")
@@ -75,7 +78,7 @@ class HosterBill(Entity):
 		verbose_name = gettext("Hoster Bill")
 		verbose_name_plural = gettext("Hoster Bills")
 
-		list_display = ['date', 'amount', 'bill_id', 'payed_date', 'package', 'isPayed']
+		list_display = ['date', 'amount', 'bill_id', 'payed_date', 'package', 'isPayed', 'own_bill']
 
 class HosterCustomerNumber(Entity):
 	customer_number = Field(Integer)
@@ -110,7 +113,7 @@ class Domain(Entity):
 		verbose_name = gettext("Domain")
 		verbose_name_plural = gettext("Domain")
 
-		list_display = ['url']
+		list_display = ['url', 'package']
 
 
 class OwnBill(Entity):
@@ -130,4 +133,4 @@ class OwnBill(Entity):
 		verbose_name = gettext("Own Bill")
 		verbose_name_plural = gettext("Own Bills")
 
-		list_display = ['bill_id', 'date', 'payed_when', 'hoster_bill']
+		list_display = ['bill_id', 'date', 'amount', 'payed_when', 'hoster_bill']
