@@ -32,7 +32,7 @@ class Package(Entity):
 	hoster_customer_number = ManyToOne("HosterCustomerNumber")
 	interval_months = Field(Integer)
 	customer = ManyToOne("Customer")
-	domains = OneToMany("Domains")
+	domains = OneToMany("Domain")
 
 	hoster_bills = OneToMany("HosterBill")
 
