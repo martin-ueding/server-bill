@@ -12,10 +12,10 @@ class MyApplicationAdmin(ApplicationAdmin):
 		from camelot.model.authentication import Person, Organization
 		from camelot.model.i18n import Translation
 
-		from model import Customer, Package, HosterBill
+		from model import Customer, Package, HosterBill, HosterCustomerNumber, Domain, OwnBill
 		return [Section(gettext('data'),
 						Icon('tango/22x22/apps/system-users.png'),
-						items = [Customer, Package, HosterBill]),
+						items = [Customer, Package, HosterBill, HosterCustomerNumber, Domain, OwnBill]),
 				Section('configuration',
 						Icon('tango/22x22/categories/preferences-system.png'),
 						items = [Memento, Translation])
