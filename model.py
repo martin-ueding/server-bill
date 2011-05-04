@@ -36,7 +36,7 @@ class Package(Entity):
 	hoster_bills = OneToMany("HosterBill")
 
 	def __repr__(self):
-		if self.customer is NoneType:
+		if self.customer is None:
 			return gettext("unknown Customer")
 		else:
 			return gettext("<Package for %s>") % self.customer.name
