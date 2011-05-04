@@ -26,7 +26,7 @@ class Customer(Entity):
 		verbose_name = gettext("Customer")
 		verbose_name_plural = gettext("Customers")
 
-		list_display = ['name', 'bill_prefix']
+		list_display = ['name', 'bill_prefix', 'packages']
 
 class Package(Entity):
 	hoster_customer_number = ManyToOne("HosterCustomerNumber")
@@ -51,7 +51,7 @@ class Package(Entity):
 		verbose_name = gettext("Package")
 		verbose_name_plural = gettext("Packages")
 
-		list_display = ['interval_months', 'customer', 'hoster_customer_number']
+		list_display = ['interval_months', 'customer', 'hoster_customer_number', 'domains']
 
 class HosterBill(Entity):
 	date = Field(Date)
@@ -92,7 +92,7 @@ class HosterCustomerNumber(Entity):
 		verbose_name = gettext("Hoster Customer Number")
 		verbose_name_plural = gettext("Hoster Customer Numbers")
 
-		list_display = ['customer_number']
+		list_display = ['customer_number', 'packages']
 
 
 class Domain(Entity):
