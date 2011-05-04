@@ -37,10 +37,13 @@ class Package(Entity):
 	hoster_bills = OneToMany("HosterBill")
 
 	def __repr__(self):
-		return gettext("<Package for %s>") % self.customer.name
+		if self.customer is NoneType:
+			return gettext("unknown Customer")
+		else
+			return gettext("<Package for %s>") % self.customer.name
 	
 	def __unicode__(self):
-		return gettext("<Package for %s>") % self.customer.name or gettext("unknown Package")
+		return __repr__(self)
 
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Package")
