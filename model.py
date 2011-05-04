@@ -39,7 +39,7 @@ class Package(Entity):
 	def __repr__(self):
 		if self.customer is NoneType:
 			return gettext("unknown Customer")
-		else
+		else:
 			return gettext("<Package for %s>") % self.customer.name
 	
 	def __unicode__(self):
