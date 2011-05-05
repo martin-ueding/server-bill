@@ -30,6 +30,25 @@ class Customer(Entity):
 
 		list_display = ['name', 'bill_prefix', 'packages']
 
+from camelot.admin.object_admin import ObjectAdmin
+from camelot.view.controls import delegates
+
+class PackageDueDate(object):
+	def __init__(self, package):
+		self._package = package
+
+	def _get_date(self):
+		return self.package.nextDueDate()
+
+	def _set_date(self, newdate):
+		pass
+
+	date = property(_get_date)
+
+	class Admin(ObjectAdmin):
+		form_display = ['date']
+		field_attributes = dict(date = dict(delegate = delegates.DateDelegate, name = gettext("due date")))
+
 class Package(Entity):
 	hoster_customer_number = ManyToOne("HosterCustomerNumber")
 	interval_months = Field(Integer)
@@ -37,6 +56,9 @@ class Package(Entity):
 	domains = OneToMany("Domain")
 
 	hoster_bills = OneToMany("HosterBill")
+
+	def __init__(self):
+		due_date = PackageDueDate(self)
 
 	def __repr__(self):
 		if self.customer is None:
@@ -80,7 +102,7 @@ class Package(Entity):
 		verbose_name = gettext("Package")
 		verbose_name_plural = gettext("Packages")
 
-		list_display = ['interval_months', 'customer', 'hoster_customer_number', 'domains']
+		list_display = ['interval_months', 'customer', 'hoster_customer_number', 'domains', 'due_date']
 
 class HosterBill(Entity):
 	date = Field(Date)
