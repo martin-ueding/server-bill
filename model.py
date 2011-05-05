@@ -51,17 +51,17 @@ class Package(Entity):
 
 	@ColumnProperty
 	def nextDueDate(self):
-		if hoster_bills is None:
+		if self.hoster_bills is None:
 			logging.warning(gettext("%s has no hoster_bill field") % self.__repr__())
 			return None
 
-		if len(hoster_bills) <= 0:
+		if len(self.hoster_bills) <= 0:
 			logging.warning(gettext("%s has no hoster_bills") % self.__repr__())
 			return None
 
 		last_bill_date = datetime.date(day=1, month=1, year=1)
 
-		for bill in hoster_bills:
+		for bill in self.hoster_bills:
 			if last_bill_date < bill.date:
 				last_bill_date = bill.date
 
