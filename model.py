@@ -49,7 +49,6 @@ class Package(Entity):
 	def __unicode__(self):
 		return self.__repr__()
 
-	@ColumnProperty
 	def nextDueDate(self):
 		if self.hoster_bills is None:
 			logging.warning(gettext("%s has no hoster_bill field") % self.__repr__())
@@ -69,7 +68,13 @@ class Package(Entity):
 		due_date = datetime.date(day=last_bill_date.date, month=(last_bill_date.month-1+interval)%12 +1, year=last_bill_date.year + (last_bill_date.month-1+interval)/12)
 
 		return due_date
-			
+
+	def getADomain(self):
+		if self.domains is None or len(self.domains) == 0:
+			return gettext("no domains")
+
+		else:
+			return self.domains[0]
 
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Package")
