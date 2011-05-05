@@ -80,7 +80,7 @@ class Package(Entity):
 		verbose_name = gettext("Package")
 		verbose_name_plural = gettext("Packages")
 
-		list_display = ['interval_months', 'customer', 'hoster_customer_number', 'domains', 'nextDueDate']
+		list_display = ['interval_months', 'customer', 'hoster_customer_number', 'domains']
 
 class HosterBill(Entity):
 	date = Field(Date)
