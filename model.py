@@ -57,8 +57,10 @@ class Package(Entity):
 
 	hoster_bills = OneToMany("HosterBill")
 
+	due_date = None
+
 	def __init__(self):
-		due_date = PackageDueDate(self)
+		self.due_date = PackageDueDate(self)
 
 	def __repr__(self):
 		if self.customer is None:
