@@ -8,6 +8,8 @@ from elixir.properties import ColumnProperty
 
 from gettext import gettext
 
+import logging
+
 
 __metadata__ = metadata
 
@@ -47,11 +49,33 @@ class Package(Entity):
 	def __unicode__(self):
 		return self.__repr__()
 
+	@ColumnProperty
+	def nextDueDate(self):
+		if hoster_bills is None:
+			logging.warning(gettext("%s has no hoster_bill field") % self.__repr__())
+			return None
+
+		if len(hoster_bills) <= 0:
+			logging.warning(gettext("%s has no hoster_bills") % self.__repr__())
+			return None
+
+		last_bill_date = datetime.date(day=1, month=1, year=1)
+
+		for bill in hoster_bills:
+			if last_bill_date < bill.date:
+				last_bill_date = bill.date
+
+		# add the interval to the date
+		due_date = datetime.date(day=last_bill_date.date, month=(last_bill_date.month-1+interval)%12 +1, year=last_bill_date.year + (last_bill_date.month-1+interval)/12)
+
+		return due_date
+			
+
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Package")
 		verbose_name_plural = gettext("Packages")
 
-		list_display = ['interval_months', 'customer', 'hoster_customer_number', 'domains']
+		list_display = ['interval_months', 'customer', 'hoster_customer_number', 'domains', 'nextDueDate']
 
 class HosterBill(Entity):
 	date = Field(Date)
