@@ -134,6 +134,13 @@ class Domain(Entity):
 	url = Field(Unicode)
 	package = ManyToOne("Package")
 
+	@property
+	def customer(self):
+		if self.package is not None and self.package.customer is not None:
+			return self.package.customer.__unicode__()
+
+		return None
+
 	def __repr__(self):
 		return gettext("<Domain %s>") % self.url or gettext("unknown Domain")
 
@@ -145,7 +152,7 @@ class Domain(Entity):
 		verbose_name = gettext("Domain")
 		verbose_name_plural = gettext("Domain")
 
-		list_display = ['url', 'package']
+		list_display = ['url', 'package', 'customer']
 
 
 class OwnBill(Entity):
