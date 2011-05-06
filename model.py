@@ -11,7 +11,12 @@ import datetime
 
 __metadata__ = metadata
 
+
 class Customer(Entity):
+	"""
+	A customer who has multiple packages
+	"""
+
 	name = Field(Unicode(200))
 	bill_prefix = Field(Unicode(100))
 	packages = OneToMany("Package")
@@ -40,22 +45,40 @@ class Customer(Entity):
 
 		list_display = ['name', 'bill_prefix', 'packages']
 
+
 class Package(Entity):
+	"""
+	A package from the hoster, it contains multiple domains. Each package is
+	owned my a certain customer
+	"""
+
 	hoster_customer_number = ManyToOne("HosterCustomerNumber")
 	interval_months = Field(Integer)
 	customer = ManyToOne("Customer")
 	domains = OneToMany("Domain")
-
 	hoster_bills = OneToMany("HosterBill")
+
 
 	@property
 	def status(self):
+		"""
+		returns the status of the package
+
+		This determines the current payment status of the package:
+		* whether a new bill is due
+		* whether the hoster already send a bill
+		* whether this bill is payed by you
+		* whether this bill is relayed to the customer
+		* whether the relayed bill is payed
+		"""
+
 		status_msgs = []
 		last_bill = self.getLastBill()
 		# fully payed
 		if last_bill is not None and not self.needs_payment:
 			status_msgs.append(gettext("payed by you"))
 
+		# if there is no last bill
 		if last_bill is None:
 			status_msgs.append(gettext("cannot determine status"))
 
@@ -79,46 +102,8 @@ class Package(Entity):
 		elif last_bill is not None:
 			status_msgs.append(gettext("relayed to customer"))
 
-		
-
 		return ', '.join(status_msgs)
 
-	
-
-	def __repr__(self):
-		if self.customer is None:
-			display_customer = "<%s>" % gettext("unknown Customer")
-		else:
-			display_customer = self.customer.__repr__()
-
-		return gettext("<Package for %s>") % display_customer
-	
-	def __unicode__(self):
-		if self.customer is None:
-			display_customer = gettext("unknown Customer")
-		else:
-			display_customer = self.customer.__unicode__()
-
-		return gettext("Package %s of %s") % (self.aDomain, display_customer)
-
-	def getLastBill(self):
-		if self.hoster_bills is None:
-			logging.warning(gettext("%s has no hoster_bill field") % self.__repr__())
-			return None
-
-		if len(self.hoster_bills) <= 0:
-			logging.warning(gettext("%s has no hoster_bills") % self.__repr__())
-			return None
-
-		last_bill = None
-		last_bill_date = datetime.date(day=1, month=1, year=1)
-
-		for bill in self.hoster_bills:
-			if last_bill_date < bill.date:
-				last_bill = bill
-				last_bill_date = bill.date
-
-		return last_bill
 
 	@property
 	def last_bill_date(self):
@@ -140,12 +125,14 @@ class Package(Entity):
 
 		return due_date
 
+
 	@property
 	def needs_payment(self):
 		if self.nextDueDate is None:
 			return False
 
 		return self.nextDueDate < datetime.date.today()
+
 
 	@property
 	def aDomain(self):
@@ -155,13 +142,60 @@ class Package(Entity):
 		else:
 			return self.domains[0]
 
+
+	def getLastBill(self):
+		if self.hoster_bills is None:
+			logging.warning(gettext("%s has no hoster_bill field") % self.__repr__())
+			return None
+
+		if len(self.hoster_bills) <= 0:
+			logging.warning(gettext("%s has no hoster_bills") % self.__repr__())
+			return None
+
+		last_bill = None
+		last_bill_date = datetime.date(day=1, month=1, year=1)
+
+		for bill in self.hoster_bills:
+			if last_bill_date < bill.date:
+				last_bill = bill
+				last_bill_date = bill.date
+
+		return last_bill
+
+
+	def __repr__(self):
+		if self.customer is None:
+			display_customer = "<%s>" % gettext("unknown Customer")
+		else:
+			display_customer = self.customer.__repr__()
+
+		return gettext("<Package for %s>") % display_customer
+
+	
+	def __unicode__(self):
+		if self.customer is None:
+			display_customer = gettext("unknown Customer")
+		else:
+			display_customer = self.customer.__unicode__()
+
+		return gettext("Package %s of %s") % (self.aDomain, display_customer)
+
+
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Package")
 		verbose_name_plural = gettext("Packages")
 
 		list_display = ['interval_months', 'customer', 'hoster_customer_number', 'domains', 'aDomain', 'last_bill_date', 'nextDueDate', 'needs_payment', 'status']
 
+
 class HosterBill(Entity):
+	"""
+	a bill from the hoster
+
+	These are bills that your webhoster has send you regarding a package you
+	have bought for any of your customers.
+	"""
+
 	date = Field(Date)
 	package = ManyToOne("Package")
 	amount = Field(Integer)
@@ -169,19 +203,24 @@ class HosterBill(Entity):
 	payed_date = Field(Date)
 	own_bill = OneToMany("OwnBill")
 
+
 	@property
 	def isPayed(self):
 		return self.payed_date is not None
+
 
 	@property
 	def isRelayed(self):
 		return self.own_bill is not None and len(self.own_bill) > 0
 
+
 	def __repr__(self):
 		return gettext("<HosterBill %s>") % self.bill_id or gettext("unknown HosterBill")
 	
+
 	def __unicode__(self):
 		return str(self.bill_id) or gettext("unknown HosterBill")
+
 
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Hoster Bill")
@@ -189,7 +228,15 @@ class HosterBill(Entity):
 
 		list_display = ['date', 'amount', 'bill_id', 'payed_date', 'package', 'isPayed', 'own_bill', 'isPayed', 'isRelayed']
 
+
 class HosterCustomerNumber(Entity):
+	"""
+	customer number at the hoster
+
+	This is the customer number that your hoster assigns you. This is handy to
+	group several packages together.
+	"""
+
 	customer_number = Field(Integer)
 	packages = OneToMany("Package")
 
@@ -197,8 +244,10 @@ class HosterCustomerNumber(Entity):
 	def __repr__(self):
 		return gettext("<HosterCustomerNumber %s>") % self.customer_number or gettext("unknown HosterCustomerNumber")
 
+
 	def __unicode__(self):
 		return str(self.customer_number) or gettext("unknown HosterCustomerNumber")
+
 
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Hoster Customer Number")
@@ -208,8 +257,17 @@ class HosterCustomerNumber(Entity):
 
 
 class Domain(Entity):
+	"""
+	a internet domain
+
+	This is a domain that is associated with a package. The domains itself do
+	not influence the billing process, but they make it easier to connect
+	packages to customers.
+	"""
+
 	url = Field(Unicode)
 	package = ManyToOne("Package")
+
 
 	@property
 	def customer(self):
@@ -218,12 +276,14 @@ class Domain(Entity):
 
 		return None
 
+
 	def __repr__(self):
 		return gettext("<Domain %s>") % self.url or gettext("unknown Domain")
 
 
 	def __unicode__(self):
 		return self.url
+
 
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Domain")
@@ -233,24 +293,35 @@ class Domain(Entity):
 
 
 class OwnBill(Entity):
+	"""
+	a bill from you to your customer
+
+	A bill where you relay the costs from the hoster to your customer.
+	"""
+
 	date = Field(Date)
 	amount = Field(Integer)
 	hoster_bill = ManyToOne("HosterBill")
 	payed_when = Field(Date)
 	bill_id = Field(Unicode)
 
+
 	@property
 	def is_payed(self):
 		return self.payed_when is not None
 
+
 	def __repr__(self):
 		return gettext("<OwnBill %s>") % self.bill_id or gettext("unknown OwnBill")
 
+
 	def __unicode__(self):
 		return self.bill_id
+
 
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Own Bill")
 		verbose_name_plural = gettext("Own Bills")
 
 		list_display = ['bill_id', 'date', 'amount', 'payed_when', 'hoster_bill', 'is_payed']
+
