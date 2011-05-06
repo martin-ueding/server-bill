@@ -3,12 +3,9 @@ from camelot.model import metadata, Entity, Field, ManyToOne, OneToMany, OneToOn
 from camelot.view.elixir_admin import EntityAdmin
 from camelot.view.forms import *
 
-
 from gettext import gettext
-
 import logging
 import datetime
-
 
 __metadata__ = metadata
 
@@ -28,9 +25,6 @@ class Customer(Entity):
 		verbose_name_plural = gettext("Customers")
 
 		list_display = ['name', 'bill_prefix', 'packages']
-
-from camelot.admin.object_admin import ObjectAdmin
-from camelot.view.controls import delegates
 
 class Package(Entity):
 	hoster_customer_number = ManyToOne("HosterCustomerNumber")
