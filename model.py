@@ -22,7 +22,7 @@ class Customer(Entity):
 	packages = OneToMany("Package")
 
 	@property
-	def allDomains(self):
+	def all_domains(self):
 		# FIXME return a better list
 		domains = []
 		if self.packages is not None:
@@ -87,11 +87,11 @@ class Package(Entity):
 			status_msgs.append(gettext("hoster bill is due"))
 
 		# unpaid
-		if last_bill is not None and not last_bill.isPayed:
+		if last_bill is not None and not last_bill.is_payed:
 			status_msgs.append(gettext("last bill not payed by you"))
 
 		# unrelayed
-		if last_bill is not None and not last_bill.isRelayed:
+		if last_bill is not None and not last_bill.is_relayed:
 			status_msgs.append(gettext("not relayed to customer"))
 
 			if last_bill.own_bill[0].is_payed:
@@ -114,7 +114,7 @@ class Package(Entity):
 
 
 	@property
-	def nextDueDate(self):
+	def next_due_date(self):
 		last_bill_date = self.last_bill_date
 
 		if last_bill_date is None:
@@ -128,14 +128,14 @@ class Package(Entity):
 
 	@property
 	def needs_payment(self):
-		if self.nextDueDate is None:
+		if self.next_due_date is None:
 			return False
 
-		return self.nextDueDate < datetime.date.today()
+		return self.next_due_date < datetime.date.today()
 
 
 	@property
-	def aDomain(self):
+	def a_domain(self):
 		if self.domains is None or len(self.domains) == 0:
 			return gettext("no domains")
 
@@ -178,14 +178,14 @@ class Package(Entity):
 		else:
 			display_customer = self.customer.__unicode__()
 
-		return gettext("Package %s of %s") % (self.aDomain, display_customer)
+		return gettext("Package %s of %s") % (self.a_domain, display_customer)
 
 
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Package")
 		verbose_name_plural = gettext("Packages")
 
-		list_display = ['interval_months', 'customer', 'hoster_customer_number', 'domains', 'aDomain', 'last_bill_date', 'nextDueDate', 'needs_payment', 'status']
+		list_display = ['interval_months', 'customer', 'hoster_customer_number', 'domains', 'a_domain', 'last_bill_date', 'next_due_date', 'needs_payment', 'status']
 
 
 class HosterBill(Entity):
@@ -205,12 +205,12 @@ class HosterBill(Entity):
 
 
 	@property
-	def isPayed(self):
+	def is_payed(self):
 		return self.payed_date is not None
 
 
 	@property
-	def isRelayed(self):
+	def is_relayed(self):
 		return self.own_bill is not None and len(self.own_bill) > 0
 
 
@@ -226,7 +226,7 @@ class HosterBill(Entity):
 		verbose_name = gettext("Hoster Bill")
 		verbose_name_plural = gettext("Hoster Bills")
 
-		list_display = ['date', 'amount', 'bill_id', 'payed_date', 'package', 'isPayed', 'own_bill', 'isPayed', 'isRelayed']
+		list_display = ['date', 'amount', 'bill_id', 'payed_date', 'package', 'is_payed', 'own_bill', 'is_payed', 'is_relayed']
 
 
 class HosterCustomerNumber(Entity):
