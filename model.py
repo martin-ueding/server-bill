@@ -3,12 +3,11 @@ from camelot.model import metadata, Entity, Field, ManyToOne, OneToMany, OneToOn
 from camelot.view.elixir_admin import EntityAdmin
 from camelot.view.forms import *
 
-from elixir.properties import ColumnProperty
-
 
 from gettext import gettext
 
 import logging
+import datetime
 
 
 __metadata__ = metadata
@@ -33,22 +32,6 @@ class Customer(Entity):
 from camelot.admin.object_admin import ObjectAdmin
 from camelot.view.controls import delegates
 
-class PackageDueDate(object):
-	def __init__(self, package):
-		self._package = package
-
-	def _get_date(self):
-		return self.package.nextDueDate()
-
-	def _set_date(self, newdate):
-		pass
-
-	date = property(_get_date)
-
-	class Admin(ObjectAdmin):
-		form_display = ['date']
-		field_attributes = dict(date = dict(delegate = delegates.DateDelegate, name = gettext("due date")))
-
 class Package(Entity):
 	hoster_customer_number = ManyToOne("HosterCustomerNumber")
 	interval_months = Field(Integer)
@@ -56,8 +39,6 @@ class Package(Entity):
 	domains = OneToMany("Domain")
 
 	hoster_bills = OneToMany("HosterBill")
-
-	due_date = None
 
 	def __init__(self):
 		self.due_date = PackageDueDate(self)
@@ -73,6 +54,7 @@ class Package(Entity):
 	def __unicode__(self):
 		return self.__repr__()
 
+	@property
 	def nextDueDate(self):
 		if self.hoster_bills is None:
 			logging.warning(gettext("%s has no hoster_bill field") % self.__repr__())
@@ -89,11 +71,12 @@ class Package(Entity):
 				last_bill_date = bill.date
 
 		# add the interval to the date
-		due_date = datetime.date(day=last_bill_date.date, month=(last_bill_date.month-1+interval)%12 +1, year=last_bill_date.year + (last_bill_date.month-1+interval)/12)
+		due_date = datetime.date(day=last_bill_date.day, month=(last_bill_date.month-1+self.interval_months)%12 +1, year=last_bill_date.year + (last_bill_date.month-1+self.interval_months)/12)
 
 		return due_date
 
-	def getADomain(self):
+	@property
+	def aDomain(self):
 		if self.domains is None or len(self.domains) == 0:
 			return gettext("no domains")
 
@@ -104,7 +87,7 @@ class Package(Entity):
 		verbose_name = gettext("Package")
 		verbose_name_plural = gettext("Packages")
 
-		list_display = ['interval_months', 'customer', 'hoster_customer_number', 'domains', 'due_date']
+		list_display = ['interval_months', 'customer', 'hoster_customer_number', 'domains', 'aDomain', 'nextDueDate']
 
 class HosterBill(Entity):
 	date = Field(Date)
@@ -114,7 +97,7 @@ class HosterBill(Entity):
 	payed_date = Field(Date)
 	own_bill = OneToOne("OwnBill", inverse='hoster_bill')
 
-	@ColumnProperty
+	@property
 	def isPayed(self):
 		return self.amount > 10
 
