@@ -34,7 +34,7 @@ class Customer(Entity):
 				
 
 	def __repr__(self):
-		return gettext("<Customer %s>") % self.name or gettext("unknown Customer")
+		return gettext("<Customer %s>") % self.name or gettext("unknown customer")
 
 	def __unicode__(self):
 		return self.name
@@ -165,7 +165,7 @@ class Package(Entity):
 
 	def __repr__(self):
 		if self.customer is None:
-			display_customer = "<%s>" % gettext("unknown Customer")
+			display_customer = "<%s>" % gettext("unknown customer")
 		else:
 			display_customer = self.customer.__repr__()
 
@@ -174,7 +174,7 @@ class Package(Entity):
 	
 	def __unicode__(self):
 		if self.customer is None:
-			display_customer = gettext("unknown Customer")
+			display_customer = gettext("unknown customer")
 		else:
 			display_customer = self.customer.__unicode__()
 
@@ -215,7 +215,7 @@ class HosterBill(Entity):
 
 
 	def __repr__(self):
-		return gettext("<HosterBill %s>") % self.bill_id or gettext("unknown HosterBill")
+		return gettext("<HosterBill %s>") % self.bill_id or gettext("unknown hoster bill")
 	
 
 	def __unicode__(self):
@@ -242,11 +242,11 @@ class HosterCustomerNumber(Entity):
 
 
 	def __repr__(self):
-		return gettext("<HosterCustomerNumber %s>") % self.customer_number or gettext("unknown HosterCustomerNumber")
+		return gettext("<HosterCustomerNumber %s>") % self.customer_number or gettext("unknown hoster customer number")
 
 
 	def __unicode__(self):
-		return str(self.customer_number) or gettext("unknown HosterCustomerNumber")
+		return str(self.customer_number) or gettext("unknown hoster customer number")
 
 
 	class Admin(EntityAdmin):
@@ -278,7 +278,7 @@ class Domain(Entity):
 
 
 	def __repr__(self):
-		return gettext("<Domain %s>") % self.url or gettext("unknown Domain")
+		return gettext("<Domain %s>") % self.url or gettext("unknown domain")
 
 
 	def __unicode__(self):
@@ -312,7 +312,7 @@ class OwnBill(Entity):
 
 
 	def __repr__(self):
-		return gettext("<OwnBill %s>") % self.bill_id or gettext("unknown OwnBill")
+		return gettext("<OwnBill %s>") % self.bill_id or gettext("unknown own bill")
 
 
 	def __unicode__(self):
