@@ -174,6 +174,10 @@ class OwnBill(Entity):
 	payed_when = Field(Date)
 	bill_id = Field(Unicode)
 
+	@property
+	def is_payed(self):
+		return self.payed_when is not None
+
 	def __repr__(self):
 		return gettext("<OwnBill %s>") % self.bill_id or gettext("unknown OwnBill")
 
@@ -184,4 +188,4 @@ class OwnBill(Entity):
 		verbose_name = gettext("Own Bill")
 		verbose_name_plural = gettext("Own Bills")
 
-		list_display = ['bill_id', 'date', 'amount', 'payed_when', 'hoster_bill']
+		list_display = ['bill_id', 'date', 'amount', 'payed_when', 'hoster_bill', 'is_payed']
