@@ -21,7 +21,7 @@ class Customer(Entity):
 		return gettext("<Customer %s>") % self.name or gettext("unknown Customer")
 
 	def __unicode__(self):
-		return self.__repr__()
+		return self.name
 
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Customer")
@@ -45,14 +45,19 @@ class Package(Entity):
 
 	def __repr__(self):
 		if self.customer is None:
-			display_customer = gettext("unknown Customer")
+			display_customer = "<%s>" % gettext("unknown Customer")
 		else:
-			display_customer = self.customer.name
+			display_customer = self.customer.__repr__()
 
 		return gettext("<Package for %s>") % display_customer
 	
 	def __unicode__(self):
-		return self.__repr__()
+		if self.customer is None:
+			display_customer = gettext("unknown Customer")
+		else:
+			display_customer = self.customer.__unicode__()
+
+		return gettext("Package for %s") % display_customer
 
 	@property
 	def nextDueDate(self):
@@ -105,7 +110,7 @@ class HosterBill(Entity):
 		return gettext("<HosterBill %s>") % self.bill_id or gettext("unknown HosterBill")
 	
 	def __unicode__(self):
-		return self.__repr__()
+		return str(self.bill_id) or gettext("unknown HosterBill")
 
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Hoster Bill")
@@ -122,7 +127,7 @@ class HosterCustomerNumber(Entity):
 		return gettext("<HosterCustomerNumber %s>") % self.customer_number or gettext("unknown HosterCustomerNumber")
 
 	def __unicode__(self):
-		return self.__repr__()
+		return str(self.customer_number) or gettext("unknown HosterCustomerNumber")
 
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Hoster Customer Number")
@@ -140,7 +145,7 @@ class Domain(Entity):
 
 
 	def __unicode__(self):
-		return self.__repr__()
+		return self.url
 
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Domain")
@@ -160,7 +165,7 @@ class OwnBill(Entity):
 		return gettext("<OwnBill %s>") % self.bill_id or gettext("unknown OwnBill")
 
 	def __unicode__(self):
-		return self.__repr__()
+		return self.bill_id
 
 	class Admin(EntityAdmin):
 		verbose_name = gettext("Own Bill")
