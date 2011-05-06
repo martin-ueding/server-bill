@@ -14,6 +14,18 @@ class Customer(Entity):
 	bill_prefix = Field(Unicode(100))
 	packages = OneToMany("Package")
 
+	@property
+	def allDomains(self):
+		# FIXME return a better list
+		domains = []
+		if self.packages is not None:
+			for package in self.packages:
+				for domain in package.domains:
+					domains.append(domain.__unicode__())
+
+		return domains
+				
+
 	def __repr__(self):
 		return gettext("<Customer %s>") % self.name or gettext("unknown Customer")
 
@@ -51,7 +63,7 @@ class Package(Entity):
 		else:
 			display_customer = self.customer.__unicode__()
 
-		return gettext("Package for %s") % display_customer
+		return gettext("Package %s of %s") % (self.aDomain, display_customer)
 
 	@property
 	def nextDueDate(self):
