@@ -1,3 +1,5 @@
+# Copyright (c) 2011 Martin Ueding <dev@martin-ueding.de>
+
 import camelot.types
 from camelot.model import metadata, Entity, Field, ManyToOne, OneToMany, OneToOne, Unicode, Date, Integer, using_options
 from camelot.view.elixir_admin import EntityAdmin

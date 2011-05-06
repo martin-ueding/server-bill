@@ -1,3 +1,5 @@
+# Copyright (c) 2011 Martin Ueding <dev@martin-ueding.de>
+
 from camelot.view.art import Icon
 from camelot.admin.application_admin import ApplicationAdmin
 from camelot.admin.section import Section
