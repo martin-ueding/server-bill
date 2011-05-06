@@ -106,11 +106,15 @@ class HosterBill(Entity):
 	amount = Field(Integer)
 	bill_id = Field(Unicode(100))
 	payed_date = Field(Date)
-	own_bill = OneToOne("OwnBill", inverse='hoster_bill')
+	own_bill = OneToMany("OwnBill")
 
 	@property
 	def isPayed(self):
-		return self.amount > 10
+		return self.payed_date is not None
+
+	@property
+	def isRelayed(self):
+		return self.own_bill is not None and len(self.own_bill) > 0
 
 	def __repr__(self):
 		return gettext("<HosterBill %s>") % self.bill_id or gettext("unknown HosterBill")
@@ -122,7 +126,7 @@ class HosterBill(Entity):
 		verbose_name = gettext("Hoster Bill")
 		verbose_name_plural = gettext("Hoster Bills")
 
-		list_display = ['date', 'amount', 'bill_id', 'payed_date', 'package', 'isPayed', 'own_bill']
+		list_display = ['date', 'amount', 'bill_id', 'payed_date', 'package', 'isPayed', 'own_bill', 'isPayed', 'isRelayed']
 
 class HosterCustomerNumber(Entity):
 	customer_number = Field(Integer)
